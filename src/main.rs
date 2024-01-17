@@ -13,16 +13,16 @@ use std::time::Duration;
 use std::{fs::File, io::stdout};
 use textplots::{Chart, Plot, Shape};
 
-const MIN_DELAY_MS: u64 = 50;
-const MAX_DELAY_MS: u64 = 400;
+const MIN_DELAY_BETWEEN_KEYSTROKES_MS: u64 = 50;
+const MAX_DELAY_BETWEEN_KEYSTROKES_MS: u64 = 400;
 
-const EXTRA_TYPING_PROBABILITY: f64 = 0.05;
-const EXTRA_TYPING_CHARS_MIN: u64 = 1;
-const EXTRA_TYPING_CHARS_MAX: u64 = 3;
+const TYPO_PROBABILITY: f64 = 0.05;
+const TYPO_TYPED_CHARS_MIN: u64 = 1;
+const TYPO_TYPED_CHARS_MAX: u64 = 3;
 
-const SLEEPY_PROBABILITY: f64 = 0.05;
-const SLEEPY_MINUTES_MIN: u64 = 2;
-const SLEEPY_MINUTES_MAX: u64 = 10;
+const INTERMISSION_PROBABILITY: f64 = 0.05;
+const INTERMISSION_DURATION_MINUTES_MIN: u64 = 2;
+const INTERMISSION_DURATION_MINUTES_MAX: u64 = 10;
 
 enum Key {
     Return,
@@ -117,8 +117,8 @@ fn write(reader: io::BufReader<File>) -> io::Result<()> {
 }
 
 fn flip_do_typo() -> Result<(), io::Error> {
-    Ok(if thread_rng().gen_bool(EXTRA_TYPING_PROBABILITY) {
-        let extra_chars = thread_rng().gen_range(EXTRA_TYPING_CHARS_MIN..=EXTRA_TYPING_CHARS_MAX);
+    Ok(if thread_rng().gen_bool(TYPO_PROBABILITY) {
+        let extra_chars = thread_rng().gen_range(TYPO_TYPED_CHARS_MIN..=TYPO_TYPED_CHARS_MAX);
         let spinner_message = format!("Faking a typo by typing {} extra chars", extra_chars);
         let mut spinner = Spinner::new(Spinners::Dots9, spinner_message);
         for _ in 0..extra_chars {
@@ -135,8 +135,9 @@ fn flip_do_typo() -> Result<(), io::Error> {
 }
 
 fn flip_do_break() {
-    if thread_rng().gen_bool(SLEEPY_PROBABILITY) {
-        let wait_minutes = thread_rng().gen_range(SLEEPY_MINUTES_MIN..=SLEEPY_MINUTES_MAX);
+    if thread_rng().gen_bool(INTERMISSION_PROBABILITY) {
+        let wait_minutes = thread_rng()
+            .gen_range(INTERMISSION_DURATION_MINUTES_MIN..=INTERMISSION_DURATION_MINUTES_MAX);
         let spinner_message = format!("Line is empty, sleeping for {} minutes...", wait_minutes);
 
         let _spinner = Spinner::new(Spinners::Dots9, spinner_message);
@@ -156,24 +157,28 @@ fn type_letter(key: &str) -> io::Result<()> {
 
 fn random_delay() -> Duration {
     let mut rng = thread_rng();
-    let delay = rng.gen_range(MIN_DELAY_MS..MAX_DELAY_MS);
+    let delay = rng.gen_range(MIN_DELAY_BETWEEN_KEYSTROKES_MS..MAX_DELAY_BETWEEN_KEYSTROKES_MS);
     Duration::from_millis(delay)
 }
 
 fn calculate_runtimes(total_chars: usize) -> (f64, f64, f64) {
-    let lowest_runtime_seconds = total_chars as f64 * MIN_DELAY_MS as f64 / 1000.0;
+    let lowest_runtime_seconds =
+        total_chars as f64 * MIN_DELAY_BETWEEN_KEYSTROKES_MS as f64 / 1000.0;
 
-    let average_delay_ms = (MIN_DELAY_MS + MAX_DELAY_MS) / 2;
-    let average_extra_chars = (EXTRA_TYPING_CHARS_MIN + EXTRA_TYPING_CHARS_MAX) / 2;
+    let average_delay_ms = (MIN_DELAY_BETWEEN_KEYSTROKES_MS + MAX_DELAY_BETWEEN_KEYSTROKES_MS) / 2;
+    let average_extra_chars = (TYPO_TYPED_CHARS_MIN + TYPO_TYPED_CHARS_MAX) / 2;
     let typo_adjustment =
-        EXTRA_TYPING_PROBABILITY * average_extra_chars as f64 * 2.0 * average_delay_ms as f64;
+        TYPO_PROBABILITY * average_extra_chars as f64 * 2.0 * average_delay_ms as f64;
     let average_runtime_seconds =
         total_chars as f64 * (average_delay_ms as f64 + typo_adjustment) / 1000.0;
 
-    let max_typo_adjustment =
-        EXTRA_TYPING_PROBABILITY * EXTRA_TYPING_CHARS_MAX as f64 * 2.0 * MAX_DELAY_MS as f64;
-    let worst_case_runtime_seconds =
-        total_chars as f64 * (MAX_DELAY_MS as f64 + max_typo_adjustment) / 1000.0;
+    let max_typo_adjustment = TYPO_PROBABILITY
+        * TYPO_TYPED_CHARS_MAX as f64
+        * 2.0
+        * MAX_DELAY_BETWEEN_KEYSTROKES_MS as f64;
+    let worst_case_runtime_seconds = total_chars as f64
+        * (MAX_DELAY_BETWEEN_KEYSTROKES_MS as f64 + max_typo_adjustment)
+        / 1000.0;
 
     (
         lowest_runtime_seconds,

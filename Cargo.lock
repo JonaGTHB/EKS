@@ -3,18 +3,6 @@
 version = 3
 
 [[package]]
-name = "EKS"
-version = "0.1.0"
-dependencies = [
- "crossterm",
- "indicatif",
- "rand",
- "rfd",
- "spinners",
- "textplots",
-]
-
-[[package]]
 name = "atk-sys"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -150,6 +138,18 @@ checksum = "e64e461c3f1e69d99372620640b3fd5f0309eeda2e26e4af69f6760c0e1df845"
 dependencies = [
  "colored",
  "fnv",
+]
+
+[[package]]
+name = "eks"
+version = "0.1.0"
+dependencies = [
+ "crossterm",
+ "indicatif",
+ "rand",
+ "rfd",
+ "spinners",
+ "textplots",
 ]
 
 [[package]]
