@@ -2,6 +2,7 @@ use crossterm::{
     execute,
     terminal::{Clear, ClearType},
 };
+use inquire::CustomType;
 use rand::{thread_rng, Rng};
 use rfd::FileDialog;
 use spinners::{Spinner, Spinners};
@@ -50,6 +51,31 @@ fn main() -> io::Result<()> {
     };
 
     let path = selected_file_path.unwrap();
+
+    let min_delay_ms: u64 = CustomType::new("Enter the minimum delay (in ms)")
+        .with_error_message("Please enter a valid number")
+        .prompt()
+        .unwrap();
+
+    let max_delay_ms: u64 = CustomType::new("Enter the maximum delay (in ms)")
+        .with_error_message("Please enter a valid number")
+        .prompt()
+        .unwrap();
+
+    let extra_typing_probability: f64 = CustomType::new("Enter the extra typing probability")
+        .with_error_message("Please enter a valid floating point number")
+        .prompt()
+        .unwrap();
+
+    let extra_typing_chars_min: u64 = CustomType::new("Enter the minimum extra typed characters")
+        .with_error_message("Please enter a valid number")
+        .prompt()
+        .unwrap();
+
+    let extra_typing_chars_max: u64 = CustomType::new("Enter the maximum extra typed characters")
+        .with_error_message("Please enter a valid number")
+        .prompt()
+        .unwrap();
 
     let mut file = File::open(path)?;
     let reader = io::BufReader::new(&file);
