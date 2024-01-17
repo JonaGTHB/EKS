@@ -52,27 +52,27 @@ fn main() -> io::Result<()> {
 
     let path = selected_file_path.unwrap();
 
-    let min_delay_ms: u64 = CustomType::new("Enter the minimum delay (in ms)")
+    let _min_delay_ms: u64 = CustomType::new("Enter the minimum delay (in ms)")
         .with_error_message("Please enter a valid number")
         .prompt()
         .unwrap();
 
-    let max_delay_ms: u64 = CustomType::new("Enter the maximum delay (in ms)")
+    let _max_delay_ms: u64 = CustomType::new("Enter the maximum delay (in ms)")
         .with_error_message("Please enter a valid number")
         .prompt()
         .unwrap();
 
-    let extra_typing_probability: f64 = CustomType::new("Enter the extra typing probability")
+    let _extra_typing_probability: f64 = CustomType::new("Enter the extra typing probability")
         .with_error_message("Please enter a valid floating point number")
         .prompt()
         .unwrap();
 
-    let extra_typing_chars_min: u64 = CustomType::new("Enter the minimum extra typed characters")
+    let _extra_typing_chars_min: u64 = CustomType::new("Enter the minimum extra typed characters")
         .with_error_message("Please enter a valid number")
         .prompt()
         .unwrap();
 
-    let extra_typing_chars_max: u64 = CustomType::new("Enter the maximum extra typed characters")
+    let _extra_typing_chars_max: u64 = CustomType::new("Enter the maximum extra typed characters")
         .with_error_message("Please enter a valid number")
         .prompt()
         .unwrap();
