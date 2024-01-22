@@ -719,9 +719,9 @@ checksum = "69758bda2e78f098e4ccb393021a0963bb3442eac05f135c30f61b7370bbafae"
 
 [[package]]
 name = "textplots"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2171116bd71c738068fe42091b1509d70135a768443c9afd6c179b83dc6cdc79"
+checksum = "d88f2321b668626b52a15898e839430b352f07644160c1a47bab512cc4f29cfd"
 dependencies = [
  "drawille",
  "rgb",
